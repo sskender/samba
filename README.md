@@ -28,6 +28,46 @@ smb://<host-ip>/share
 
 Default credentials: `admin` / `admin`.
 
+## Example
+
+Add a test file to the share on the host. The share is mounted into the container directly, so no restart is needed:
+
+```sh
+echo "hello from samba" > share/test.txt
+```
+
+### Linux
+
+Using `smbclient` (package `smbclient` on Debian/Ubuntu, `samba-client` on RHEL/Fedora):
+
+```sh
+# List files in the share
+smbclient //<host-ip>/share -U admin%admin -c 'ls'
+
+# Download test.txt to the current directory
+smbclient //<host-ip>/share -U admin%admin -c 'get test.txt'
+```
+
+### macOS
+
+Using the built-in `smbutil` and `mount_smbfs` tools:
+
+```sh
+# List available shares on the server
+smbutil view //admin:admin@<host-ip>
+
+# Mount the share, list it and copy test.txt locally
+mkdir -p ~/mnt/share
+mount_smbfs //admin:admin@<host-ip>/share ~/mnt/share
+ls ~/mnt/share
+cat ~/mnt/share/test.txt
+
+# Unmount when done
+umount ~/mnt/share
+```
+
+Alternatively, open `smb://<host-ip>/share` from Finder via **Go → Connect to Server** (⌘K).
+
 ## Configuration
 
 | File          | Purpose                                         |
